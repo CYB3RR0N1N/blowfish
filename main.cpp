@@ -4,12 +4,6 @@
 
 using namespace std;
 
-
-uint32_t F(uint32_t x)
-{
-    return x;
-}
-
 const uint32_t INIT_SBOX[4][256] =
 {
     0x243F6A88, 0x85A308D3, 0x13198A2E, 0x03707344,
@@ -279,57 +273,88 @@ const uint32_t INIT_P[18]
     0x578FDFE3, 0x3AC372E6
 };
 
-void encrypt(uint32_t *keys, uint32_t left, uint32_t right)
+class Blowfish
 {
-    for (int i = 0 ; i < 16 ; i++)
+public:
+
+    void encrypt_block(uint32_t &left, uint32_t &right)
     {
-        left ^= keys[i];
-        right = F(left) ^ right;
+        for (int i = 0 ; i < 16 ; i++)
+        {
+            left ^= key[i];
+            right = F(left) ^ right;
+            swap(left,right);
+        }
         swap(left,right);
-    }
-    swap(left,right);
-    left ^= keys[17];
-    right ^= keys[16];
-}
-
-void decrypt()
-{
-    uint32_t keys[18];
-    uint32_t left;
-    uint32_t right;
-
-    left ^=  keys[17];
-    right ^= keys[16];
-
-    for (int i = 15 ; i >= 0 ; i++)
-    {
-        left ^= keys[i];
-        right = F(left) ^ right;
-        swap(left,right);
+        left ^= key[17];
+        right ^= key[16];
     }
 
-    swap(left,right);
-}
-
-void key_expand(uint32_t *key, int len)
-{
-    uint32_t expanded_key[18];
-    for (int i = 0 ; i < 18 ; i++)
+    void decrypt_block(uint32_t &left, uint32_t &right)
     {
-        expanded_key[i] = key[i % len] ^ INIT_P[i]; //Copy and concatenate initial key
-    }   
 
-    uint32_t l = 0,r = 0;
-    encrypt(expanded_key,0x00,0x00)
+        left ^=  key[17];
+        right ^= key[16];
 
-}
+
+        for (int i = 15 ; i >= 0 ; i--)
+        {
+            left ^= key[i];
+            right = F(left) ^ right;
+            swap(left,right);
+        }
+
+        //swap(left,right);
+    }
+
+    void key_expand(uint32_t *key, int len)
+    {
+        for (int i = 0 ; i < 18 ; i++)
+        {
+            this->key[i] = key[i % len] ^ INIT_P[i]; //Copy and concatenate initial key
+        }   
+
+        uint32_t l = 0,r = 0;
+
+        for(int i = 0; i < 18; i++)
+        {
+            encrypt_block(l, r);
+            this->key[i] = l;
+            this->key[++i] = r;
+        }
+
+        for(int i = 0 ; i < 4 ; i++)
+        {
+            for(int j = 0 ; j < 256; j++)
+            {
+                encrypt_block(l, r);
+                this->sbox[i][j] = l;
+                this->sbox[i][++j] = r;
+            }
+        }
+    }
+
+private:
+
+    uint32_t key[18];
+    uint32_t sbox[4][256];
+
+    uint32_t F(uint32_t x)
+    {
+        return x;
+    }
+};
+
+
 
 int main()
 {
-    uint32_t lef = 5, r = 6;
-    swap(lef,r);
-    string input;
-    string output;
-    cin >> input;
+    Blowfish encrypter;
+    uint32_t a = 0xf0, b= 0x0f;
+    uint32_t key[4] = { 0, 1, 0, 1};
+    encrypter.key_expand(key, 4);
+    encrypter.encrypt_block(a,b);
+    encrypter.decrypt_block(a,b);
+    cout << "Done\n";
     return 0;
 }
