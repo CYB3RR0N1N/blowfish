@@ -273,7 +273,7 @@ const uint32_t INIT_P[18]
     0x578FDFE3, 0x3AC372E6
 };
 
-class Blowfish
+class BlowfishEncrypter
 {
 public:
 
