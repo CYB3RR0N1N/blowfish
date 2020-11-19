@@ -349,7 +349,7 @@ private:
 
 int main()
 {
-    Blowfish encrypter;
+    BlowfishEncrypter encrypter;
     uint32_t a = 0xf0, b= 0x0f;
     uint32_t key[4] = { 0, 1, 0, 1};
     encrypter.key_expand(key, 4);
