@@ -286,6 +286,7 @@ public:
             swap(left,right);
         }
         swap(left,right);
+
         left ^= key[17];
         right ^= key[16];
     }
@@ -299,12 +300,31 @@ public:
 
         for (int i = 15 ; i >= 0 ; i--)
         {
-            left ^= key[i];
             right = F(left) ^ right;
+            left ^= key[i];
             swap(left,right);
         }
 
+        swap(left,right);
+    }
+
+    void encrypt_ex(uint32_t &left, uint32_t &right) //Debug only
+    {
+            left ^= key[0];
+            right = F(left) ^ right;
+            //swap(left,right);
+
         //swap(left,right);
+
+    }
+
+    void decrypt_ex(uint32_t &left, uint32_t &right) //Debug only
+    {
+            right = F(left) ^ right;
+            left ^= key[0];
+            swap(left,right);
+
+        swap(left,right);
     }
 
     void key_expand(uint32_t *key, int len)
@@ -341,20 +361,22 @@ private:
 
     uint32_t F(uint32_t x)
     {
-        return x;
+        uint32_t res = ((INIT_SBOX[0][(x >> 24) & 0xFF] + INIT_SBOX[1][(x >> 16) & 0xFF]) ^ INIT_SBOX[2][(x >> 8) & 0xFF]) + INIT_SBOX[3][(x) & 0xFF];
+        return res;
     }
 };
-
 
 
 int main()
 {
     BlowfishEncrypter encrypter;
     uint32_t a = 0xf0, b= 0x0f;
-    uint32_t key[4] = { 0, 1, 0, 1};
+    uint32_t key[4] = {0xff, 0x012, 0x321, 0xfed2};
     encrypter.key_expand(key, 4);
     encrypter.encrypt_block(a,b);
     encrypter.decrypt_block(a,b);
+    if ( a == 0xf0 && b ==0x0f)
+        cout << "Success\n";
     cout << "Done\n";
     return 0;
 }
