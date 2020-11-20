@@ -308,25 +308,6 @@ public:
         swap(left,right);
     }
 
-    void encrypt_ex(uint32_t &left, uint32_t &right) //Debug only
-    {
-            left ^= key[0];
-            right = F(left) ^ right;
-            //swap(left,right);
-
-        //swap(left,right);
-
-    }
-
-    void decrypt_ex(uint32_t &left, uint32_t &right) //Debug only
-    {
-            right = F(left) ^ right;
-            left ^= key[0];
-            swap(left,right);
-
-        swap(left,right);
-    }
-
     void key_expand(uint32_t *key, int len)
     {
         for (int i = 0 ; i < 18 ; i++)
@@ -361,7 +342,7 @@ private:
 
     uint32_t F(uint32_t x)
     {
-        uint32_t res = ((INIT_SBOX[0][(x >> 24) & 0xFF] + INIT_SBOX[1][(x >> 16) & 0xFF]) ^ INIT_SBOX[2][(x >> 8) & 0xFF]) + INIT_SBOX[3][(x) & 0xFF];
+        uint32_t res = ((sbox[0][(x >> 24) & 0xFF] + sbox[1][(x >> 16) & 0xFF]) ^ sbox[2][(x >> 8) & 0xFF]) + sbox[3][(x) & 0xFF];
         return res;
     }
 };
