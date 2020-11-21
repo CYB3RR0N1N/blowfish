@@ -4,8 +4,14 @@ DIR = build
 
 all: dir main
 
-main: main.cpp
-	g++ main.cpp -o $(DIR)/main -g
+main.o: main.cpp
+	g++ -c main.cpp -o $(DIR)/main.o -g
+
+blowfish.o: blowfish.cpp
+	g++ -c blowfish.cpp -o $(DIR)/blowfish.o -g
+
+main: main.o blowfish.o
+	g++ -o $(DIR)/main -g $(DIR)/main.o $(DIR)/blowfish.o
 
 clean:
 	rm -rf ./$(DIR)/*
