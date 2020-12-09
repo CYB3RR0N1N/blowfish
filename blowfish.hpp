@@ -3,6 +3,9 @@
 
 #include <cstdint>
 #include <algorithm>
+#include <filesystem>
+#include <iostream>
+#include <fstream>
 #include "pi_mantiss.hpp"
 
 class BlowfishEncrypter
@@ -11,6 +14,8 @@ public:
     void encrypt_block(uint32_t &left, uint32_t &right);
     void decrypt_block(uint32_t &left, uint32_t &right);
     void key_expand(uint32_t *key, int len);
+    void encrypt_file(std::string filename);
+    void decrypt_file(std::string filename);
 
 private:
     uint32_t key[18];
