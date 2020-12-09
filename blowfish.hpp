@@ -14,8 +14,8 @@ public:
     void encrypt_block(uint32_t &left, uint32_t &right);
     void decrypt_block(uint32_t &left, uint32_t &right);
     void key_expand(uint32_t *key, int len);
-    void encrypt_file(std::string filename);
-    void decrypt_file(std::string filename);
+    void encrypt_file(std::string filepath);
+    void decrypt_file(std::string filepath);
 
 private:
     uint32_t key[18];
