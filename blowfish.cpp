@@ -67,14 +67,14 @@ typedef union block
 {
     uint32_t dword;
     uint8_t byte[4];
-} block;
+} block ;//__attribute__((packed));
 
 void BlowfishEncrypter::encrypt_file(std::string filename)
 {
     //Determine file size
     std::uintmax_t size = std::filesystem::file_size(filename);
     if (size % 4 != 0)
-        size = size / 4 + 1;
+        size = size + (4 - size % 4);
     int buffer_size = size / 4;
     //Prepare input buffer
     block *buffer = new block[buffer_size];
@@ -100,7 +100,7 @@ void BlowfishEncrypter::decrypt_file(std::string filename)
     //Determine file size
     std::uintmax_t size = std::filesystem::file_size(filename);
     if (size % 4 != 0)
-        size = size / 4 + 1;
+        size = size + (4 - size % 4);
     int buffer_size = size / 4;
     //Prepare input buffer
     block *buffer = new block[buffer_size];
