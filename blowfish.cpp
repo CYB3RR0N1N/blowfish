@@ -71,6 +71,7 @@ typedef union block
 
 void BlowfishEncrypter::encrypt_file(std::string filename)
 {
+    std::cout << "Start encryption" << std::endl;
     //Determine file size
     std::uintmax_t size = std::filesystem::file_size(filename);
     if (size % 4 != 0)
@@ -97,6 +98,7 @@ void BlowfishEncrypter::encrypt_file(std::string filename)
 
 void BlowfishEncrypter::decrypt_file(std::string filename)
 {
+    std::cout << "Start decryption" << std::endl;
     //Determine file size
     std::uintmax_t size = std::filesystem::file_size(filename);
     if (size % 4 != 0)
