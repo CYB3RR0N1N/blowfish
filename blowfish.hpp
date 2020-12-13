@@ -11,6 +11,7 @@
 class BlowfishEncrypter
 {
 public:
+    BlowfishEncrypter();
     void encrypt_block(uint32_t &left, uint32_t &right);
     void decrypt_block(uint32_t &left, uint32_t &right);
     void key_expand(uint32_t *key, int len);

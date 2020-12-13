@@ -4,6 +4,8 @@
 #include <cstring>
 #include <getopt.h>
 #include "blowfish.hpp"
+
+#include "unistd.h"
 using namespace std;
 
 uint32_t *parse_key(char *key_str,int &key_len)
@@ -73,7 +75,7 @@ int main(int argc, char* argv[])
             break;
         }
 
-    BlowfishEncrypter encrypter;
+    BlowfishEncrypter encrypter = BlowfishEncrypter();
     uint32_t default_key[4] = {0xffffffff, 0x012, 0x321, 0xfed2};
 
     if (user_key != NULL && user_key_len > 0)
@@ -85,12 +87,14 @@ int main(int argc, char* argv[])
     }
     else 
     {
-      cout << "No key detected . Using built in key :";
+      cout << "No key detected . Using built in key: ";
       print_key(default_key,4);
       cout << endl;
       encrypter.key_expand(default_key, 4);
     }
 
+    
+    
     if (!filepath.empty())
     {
       if (state == ENCRYPT)
@@ -102,10 +106,6 @@ int main(int argc, char* argv[])
     {
       cout << "Error please set filepath" << endl;
     }
-    
-
-    encrypter.encrypt_file("files/test.txt");
-    encrypter.decrypt_file("files/test.txt");
 
     if (user_key != NULL)
         delete user_key;

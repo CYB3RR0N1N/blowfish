@@ -6,14 +6,17 @@ void BlowfishEncrypter::encrypt_block(uint32_t &left, uint32_t &right)
     for (int i = 0 ; i < 16 ; i++)
     {
         left ^= key[i];
-        right = F(left) ^ right;
+        right ^= F(left);
         std::swap(left,right);
     }
     std::swap(left,right);
 
+
+
     left ^= key[17];
     right ^= key[16];
 }
+
 void BlowfishEncrypter::decrypt_block(uint32_t &left, uint32_t &right)
 {
 
@@ -39,7 +42,7 @@ void BlowfishEncrypter::key_expand(uint32_t *key, int len)
 
     uint32_t l = 0,r = 0;
 
-    for(int i = 0; i < 18; i++)
+    for(int i = 0; i < 18; i++)  // Ошибка тут , каждый раз при запуске получаются разные клчи
     {
         encrypt_block(l, r);
         this->key[i] = l;
@@ -55,6 +58,8 @@ void BlowfishEncrypter::key_expand(uint32_t *key, int len)
             this->sbox[i][++j] = r;
         }
     }
+
+
 }
 uint32_t BlowfishEncrypter::F(uint32_t x)
 {
@@ -83,6 +88,7 @@ void BlowfishEncrypter::encrypt_file(std::string filename)
     std::ifstream fstream;
     fstream.open(filename, std::ios::binary | std::ios::in);
     fstream.read((char *)buffer->byte,size);
+    fstream.close();
     //Encrypt file
     for (int i = 0; i < buffer_size; i+=2)
     {
@@ -92,7 +98,7 @@ void BlowfishEncrypter::encrypt_file(std::string filename)
     std::ofstream ofstream;
     ofstream.open("files/crypted.dat", std::ios::binary | std::ios::out);
     ofstream.write((char *)buffer->byte, size);
-
+    ofstream.close();
     delete buffer;
 }
 
@@ -110,6 +116,7 @@ void BlowfishEncrypter::decrypt_file(std::string filename)
     std::ifstream fstream;
     fstream.open(filename, std::ios::binary | std::ios::in);
     fstream.read((char *)buffer->byte,size);
+    fstream.close();
     //Encrypt file
     for (int i = 0; i < buffer_size; i+=2)
     {
@@ -119,6 +126,16 @@ void BlowfishEncrypter::decrypt_file(std::string filename)
     std::ofstream ofstream;
     ofstream.open("files/decrypted.dat", std::ios::binary | std::ios::out);
     ofstream.write((char *)buffer->byte, size);
-
+    ofstream.close();
     delete buffer;
+}
+
+BlowfishEncrypter::BlowfishEncrypter()
+{
+    for (int i = 0 ; i < 18 ; i++)
+        key[i] = 0;
+
+    for (int i = 0 ; i < 4; i++)
+        for (int j = 0; j < 256; j++)
+            sbox[i][j] = INIT_SBOX[i][j];
 }
