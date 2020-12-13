@@ -56,21 +56,26 @@ int main(int argc, char* argv[])
     {
       switch (c)
       {
-      case 'c':
-        cout << "kek c\n";
-        break;
-      case 'd':
-        cout << "kek d\n";
-        break;
-      case 'k':
-        cout << "kek k \n";
-        break;
-      case 'f':
-        cout << cmd_arg << "\n";
-        break;
-      case '?':
-        cout << "Read manual\n";
-        break;
+          case 'c':
+            state = ENCRYPT;
+            break;
+
+          case 'd':
+            state = DECRYPT;
+            break;
+
+          case 'k':
+            user_key = parse_key(optarg,user_key_len);
+            break;
+
+          case 'f':
+            filepath = cmd_arg;
+            break;
+
+          case '?':
+            cout << "Error in input\n";
+            abort();
+            break;
       }
     }
 
