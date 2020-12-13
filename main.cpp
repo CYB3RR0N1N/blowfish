@@ -4,8 +4,8 @@
 #include <cstring>
 #include <getopt.h>
 #include "blowfish.hpp"
+#include "simple_parser.hpp"
 
-#include "unistd.h"
 using namespace std;
 
 uint32_t *parse_key(char *key_str,int &key_len)
@@ -43,37 +43,36 @@ int main(int argc, char* argv[])
     string filepath = "";
     int state = ENCRYPT;
 
+    options opt[] = {
+      {'c',NO_ARGUMENT},
+      {'d',NO_ARGUMENT},
+      {'k',REQUIRED},
+      {'f',REQUIRED},
+      {'h',NO_ARGUMENT},
+    };
+
     int c;
-    opterr=0;
-    while ((c = getopt(argc, argv, "cdk:f:")) != -1)
-    switch (c)
-        {
-          case 'c':
-            state = ENCRYPT;
-            break;
-
-          case 'd':
-            state = DECRYPT;
-            break;
-
-          case 'k':
-            user_key = parse_key(optarg,user_key_len);
-            break;
-
-          case 'f':
-            filepath = optarg;
-            break;
-
-          case '?':
-            cout << "Error in input\n";
-            abort();
-            break;
-
-          default:
-            cout << "Getopt return code: " << c <<endl;
-            abort();
-            break;
-        }
+    while ((c = parse(argc,argv,opt)) != -1)
+    {
+      switch (c)
+      {
+      case 'c':
+        cout << "kek c\n";
+        break;
+      case 'd':
+        cout << "kek d\n";
+        break;
+      case 'k':
+        cout << "kek k \n";
+        break;
+      case 'f':
+        cout << cmd_arg << "\n";
+        break;
+      case '?':
+        cout << "Read manual\n";
+        break;
+      }
+    }
 
     BlowfishEncrypter encrypter = BlowfishEncrypter();
     uint32_t default_key[4] = {0xffffffff, 0x012, 0x321, 0xfed2};
