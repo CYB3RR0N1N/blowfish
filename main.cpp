@@ -40,7 +40,8 @@ int main(int argc, char* argv[])
 {
     uint32_t *user_key = NULL;
     int user_key_len = 0;
-    string filepath = "";
+    string in_filepath = "";
+    string out_filepath = "";
     int state = ENCRYPT;
 
     options opt[] = {
@@ -48,7 +49,9 @@ int main(int argc, char* argv[])
       {'d',NO_ARGUMENT},
       {'k',REQUIRED},
       {'f',REQUIRED},
+      {'o',REQUIRED},
       {'h',NO_ARGUMENT},
+      {0}
     };
 
     int c;
@@ -69,7 +72,11 @@ int main(int argc, char* argv[])
             break;
 
           case 'f':
-            filepath = cmd_arg;
+            in_filepath = cmd_arg;
+            break;
+
+          case 'o':
+            out_filepath = cmd_arg;
             break;
 
           case '?':
@@ -91,7 +98,7 @@ int main(int argc, char* argv[])
     }
     else 
     {
-      cout << "No key detected . Using built in key: ";
+      cout << "No key detected.\nUsing built in key: ";
       print_key(default_key,4);
       cout << endl;
       encrypter.key_expand(default_key, 4);
@@ -99,16 +106,16 @@ int main(int argc, char* argv[])
 
     
     
-    if (!filepath.empty())
+    if (!in_filepath.empty())
     {
       if (state == ENCRYPT)
-        encrypter.encrypt_file(filepath);
+        encrypter.encrypt_file(in_filepath);
       else if (state == DECRYPT)
-        encrypter.decrypt_file(filepath);
+        encrypter.decrypt_file(in_filepath);
     }
     else
     {
-      cout << "Error please set filepath" << endl;
+      cout << "Error. Please set input filepath" << endl;
     }
 
     if (user_key != NULL)

@@ -72,21 +72,21 @@ typedef union block
 {
     uint32_t dword;
     uint8_t byte[4];
-} block ;//__attribute__((packed));
+} block ;
 
-void BlowfishEncrypter::encrypt_file(std::string filename)
+void BlowfishEncrypter::encrypt_file(std::string in_filepath, std::string out_filepath)
 {
-    std::cout << "Start encryption" << std::endl;
+    std::cout << "Ecrypting file " << in_filepath << std::endl;
     //Determine file size
-    std::uintmax_t size = std::filesystem::file_size(filename);
-    if (size % 4 != 0)
-        size = size + (4 - size % 4);
-    int buffer_size = size / 4;
+    std::uintmax_t size = std::filesystem::file_size(in_filepath);
+    if (size % 8 != 0)
+        size = size + (8 - size % 8);
+    int buffer_size = size / 8;
     //Prepare input buffer
     block *buffer = new block[buffer_size];
     //Read file
     std::ifstream fstream;
-    fstream.open(filename, std::ios::binary | std::ios::in);
+    fstream.open(in_filepath, std::ios::binary | std::ios::in);
     fstream.read((char *)buffer->byte,size);
     fstream.close();
     //Encrypt file
@@ -96,25 +96,28 @@ void BlowfishEncrypter::encrypt_file(std::string filename)
     }
     //Write crypted
     std::ofstream ofstream;
-    ofstream.open("files/crypted.dat", std::ios::binary | std::ios::out);
+    std::filesystem::path path = in_filepath;
+    path.replace_extension("dat");
+    ofstream.open(path, std::ios::binary | std::ios::out);
     ofstream.write((char *)buffer->byte, size);
     ofstream.close();
     delete buffer;
+    std::cout << "Eccryption complete\nOutput in file" << path << std::endl;
 }
 
-void BlowfishEncrypter::decrypt_file(std::string filename)
+void BlowfishEncrypter::decrypt_file(std::string in_filepath, std::string out_filepath)
 {
-    std::cout << "Start decryption" << std::endl;
+    std::cout << "Decrypting file " << in_filepath << std::endl;
     //Determine file size
-    std::uintmax_t size = std::filesystem::file_size(filename);
-    if (size % 4 != 0)
-        size = size + (4 - size % 4);
-    int buffer_size = size / 4;
+    std::uintmax_t size = std::filesystem::file_size(in_filepath);
+    if (size % 8 != 0)
+        size = size + (8 - size % 8);
+    int buffer_size = size / 8;
     //Prepare input buffer
     block *buffer = new block[buffer_size];
     //Read file
     std::ifstream fstream;
-    fstream.open(filename, std::ios::binary | std::ios::in);
+    fstream.open(in_filepath, std::ios::binary | std::ios::in);
     fstream.read((char *)buffer->byte,size);
     fstream.close();
     //Encrypt file
@@ -122,12 +125,16 @@ void BlowfishEncrypter::decrypt_file(std::string filename)
     {
         decrypt_block(buffer[i].dword,buffer[i+1].dword);
     }
+    std::filesystem::path path = in_filepath;
+    path.replace_extension("dat");
+    path.replace_filename("decrypted");
     //Write crypted
     std::ofstream ofstream;
-    ofstream.open("files/decrypted.dat", std::ios::binary | std::ios::out);
+    ofstream.open(path, std::ios::binary | std::ios::out);
     ofstream.write((char *)buffer->byte, size);
     ofstream.close();
     delete buffer;
+    std::cout << "Decryption complete\nOutput in file" << path << std::endl;
 }
 
 BlowfishEncrypter::BlowfishEncrypter()
