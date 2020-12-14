@@ -86,7 +86,7 @@ void BlowfishEncrypter::encrypt_file(std::string in_filepath, std::string out_fi
 #endif
     if (size % 8 != 0)
         size = size + (8 - size % 8);
-    int buffer_size = size / 8;
+    int buffer_size = size / 4;
     //Prepare input buffer
     block *buffer = new block[buffer_size];
     for (int i = 0 ; i < buffer_size; i++)
@@ -124,7 +124,7 @@ void BlowfishEncrypter::decrypt_file(std::string in_filepath, std::string out_fi
 
     if (size % 8 != 0)
         size = size + (8 - size % 8);
-    int buffer_size = size / 8;
+    int buffer_size = size / 4;
     //Prepare input buffer
     block *buffer = new block[buffer_size];
     for (int i = 0 ; i < buffer_size; i++)
