@@ -78,7 +78,13 @@ void BlowfishEncrypter::encrypt_file(std::string in_filepath, std::string out_fi
 {
     std::cout << "Ecrypting file " << in_filepath << std::endl;
     //Determine file size
+
+#ifdef __linux__
     std::uintmax_t size = std::filesystem::file_size(in_filepath);
+#else
+    int size = 16;
+#endif
+
     if (size % 8 != 0)
         size = size + (8 - size % 8);
     int buffer_size = size / 8;
@@ -109,7 +115,12 @@ void BlowfishEncrypter::decrypt_file(std::string in_filepath, std::string out_fi
 {
     std::cout << "Decrypting file " << in_filepath << std::endl;
     //Determine file size
+#ifdef __linux__
     std::uintmax_t size = std::filesystem::file_size(in_filepath);
+#else
+
+#endif
+
     if (size % 8 != 0)
         size = size + (8 - size % 8);
     int buffer_size = size / 8;

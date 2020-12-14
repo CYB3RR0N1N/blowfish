@@ -2,7 +2,6 @@
 #include <string>
 #include <iomanip>
 #include <cstring>
-#include <getopt.h>
 #include "blowfish.hpp"
 #include "simple_parser.hpp"
 
@@ -68,7 +67,7 @@ int main(int argc, char* argv[])
             break;
 
           case 'k':
-            user_key = parse_key(optarg,user_key_len);
+            user_key = parse_key(cmd_arg,user_key_len);
             break;
 
           case 'f':
