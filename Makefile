@@ -5,12 +5,6 @@ ARGS = -g --std=c++17
 
 all: dir main
 
-#main.o: main.cpp
-	#g++ -c main.cpp -o $(DIR)/main.o $(ARGS)
-
-#blowfish.o: blowfish.cpp
-	#g++ -c blowfish.cpp -o $(DIR)/blowfish.o $(ARGS)
-
 %.o : %.cpp;
 	g++ -c $^ -o $(DIR)/$@ $(ARGS)
 

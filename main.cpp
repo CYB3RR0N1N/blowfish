@@ -1,23 +1,48 @@
 #include <iostream>
 #include <string>
-#include <iomanip>
 #include <cstring>
+#include <iomanip>
+
 #include "blowfish.hpp"
 #include "simple_parser.hpp"
 
 using namespace std;
 
-uint32_t *parse_key(char *key_str,int &key_len)
+uint32_t* parse_key(const char *arg, int &len)
 {
-    int str_len = strlen(key_str);
-    uint32_t *key;
-    key_len = str_len / 8 + 1;
+    uint32_t* key;
+    int dif;
+    char buf[8];
+    int uintcheck = 0, keynum = 0;
+    if (arg[0] == '0' && arg[1] == 'x')
+      arg += 2; 
+    int lenght = strlen(arg);
+    if (lenght % 8 == 0)
+        len = lenght / 8;
+    else
+        len = lenght / 8 + 1;
+    key = new uint32_t[len];
 
-
-    key = new uint32_t[2];
-    key[0] = 0xFF;
-    key[1] = 0xBB;
-    key_len = 2;
+    for (int i = 0; i < lenght; i++)
+    {
+        buf[uintcheck] = arg[i];
+        uintcheck++;
+        if (uintcheck == 8)
+        {
+            key[keynum] = strtoul(buf, NULL, 16);
+            uintcheck = 0;
+            keynum++;
+        }
+        if ((i == lenght - 1) && (uintcheck != 8))
+        {
+            dif = 8 - uintcheck;
+            for (int i = 7; i >= dif; i--)
+                buf[i] = buf[i - dif];
+            for (int i = 0; i < dif; i++)
+                buf[i] = '0';
+            key[keynum] = strtoul(buf, NULL, 16);
+        }
+    }
     return key;
 }
 
@@ -90,7 +115,7 @@ int main(int argc, char* argv[])
 
     if (user_key != NULL && user_key_len > 0)
     {
-      cout << " Using user key : ";
+      cout << "Using user key : ";
       print_key(user_key, user_key_len);
       cout << endl;
       encrypter.key_expand(user_key, user_key_len);
