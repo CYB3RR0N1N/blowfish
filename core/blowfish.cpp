@@ -1,6 +1,5 @@
 #include "blowfish.hpp"
 
-
 void BlowfishEncrypter::encrypt_block(uint32_t &left, uint32_t &right)
 {
     for (int i = 0 ; i < 16 ; i++)
@@ -81,8 +80,10 @@ void BlowfishEncrypter::encrypt_file(std::string in_filepath, std::string out_fi
 
 #ifdef __linux__
     std::uintmax_t size = std::filesystem::file_size(in_filepath);
-#else // elif _WIN32
-    int size = 16;
+#elif _WIN32
+	struct stat stat_buf;
+	int rc = stat(in_filepath.c_str(), &stat_buf);
+	int size = stat_buf.st_size;
 #endif
     uint8_t zero_cnt = 0;
     zero_cnt = (8 - size % 8) % 8;
@@ -106,9 +107,9 @@ void BlowfishEncrypter::encrypt_file(std::string in_filepath, std::string out_fi
     //Write crypted
     std::ofstream ofstream;
     std::filesystem::path path = in_filepath;
-    std::string old_ext = path.extension();
+    std::string old_ext = path.extension().string();
     path.replace_extension("dat");
-    uint8_t ext_size = old_ext.size();
+    uint8_t ext_size = (uint8_t)old_ext.size();
     ofstream.open(path, std::ios::binary | std::ios::out);
     ofstream.write((char *)&zero_cnt,1);
     ofstream.write((char *)&ext_size,1);
@@ -116,26 +117,29 @@ void BlowfishEncrypter::encrypt_file(std::string in_filepath, std::string out_fi
     ofstream.write((char *)buffer->byte, size);
     ofstream.close();
     delete buffer;
-    std::cout << "Eccryption complete\nOutput in file" << path.filename() << std::endl;
+    std::cout << "Eccryption complete\nOutput in file " << path.filename().string() << std::endl;
 }
 
 void BlowfishEncrypter::decrypt_file(std::string in_filepath, std::string out_filepath)
 {
     std::cout << "Decrypting file " << in_filepath << std::endl;
     //Determine file size
+	std::ifstream fstream;
+	fstream.open(in_filepath, std::ios::binary | std::ios::in);
 #ifdef __linux__
     std::uintmax_t size = std::filesystem::file_size(in_filepath);
-#else  //elif _WIN32
-    int size = 16;
+#elif _WIN32
+	struct stat stat_buf;
+	int rc = stat(in_filepath.c_str(), &stat_buf);
+	int size = stat_buf.st_size;
 #endif
-    std::ifstream fstream;
-    fstream.open(in_filepath, std::ios::binary | std::ios::in);
     uint8_t zeros_size = 0;
     uint8_t ext_size;
     fstream.read((char *)&zeros_size,1);
     fstream.read((char *)&ext_size, 1);
-    char *ext = new char[ext_size];
+    char *ext = new char[ext_size + 1];
     fstream.read(ext,ext_size);
+	ext[ext_size] = 0;
 
     size -= 2 + ext_size;
     if (size % 8 != 0)
@@ -167,7 +171,7 @@ void BlowfishEncrypter::decrypt_file(std::string in_filepath, std::string out_fi
     ofstream.close();
     delete ext;
     delete buffer;
-    std::cout << "Decryption complete\nOutput in file" << path << std::endl;
+    std::cout << "Decryption complete\nOutput in file " << path.string() << std::endl;
 }
 
 BlowfishEncrypter::BlowfishEncrypter()
