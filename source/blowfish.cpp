@@ -183,3 +183,15 @@ BlowfishEncrypter::BlowfishEncrypter()
         for (int j = 0; j < 256; j++)
             sbox[i][j] = INIT_SBOX[i][j];
 }
+
+BlowfishEncrypter::BlowfishEncrypter(uint32_t *key, int len)
+{
+    for (int i = 0 ; i < 18 ; i++)
+        key[i] = 0;
+
+    for (int i = 0 ; i < 4; i++)
+        for (int j = 0; j < 256; j++)
+            sbox[i][j] = INIT_SBOX[i][j];
+
+    key_expand(key,len);
+}
