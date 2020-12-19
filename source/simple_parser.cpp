@@ -1,4 +1,4 @@
-#include "simple_parser.hpp"
+#include "../include/simple_parser.hpp"
 
 char *cmd_arg;
 

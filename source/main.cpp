@@ -3,8 +3,8 @@
 #include <cstring>
 #include <iomanip>
 
-#include "blowfish.hpp"
-#include "simple_parser.hpp"
+#include "../include/blowfish.hpp"
+#include "../include/simple_parser.hpp"
 
 using namespace std;
 

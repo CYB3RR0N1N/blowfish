@@ -1,4 +1,4 @@
-#include "blowfish.hpp"
+#include "../include/blowfish.hpp"
 
 void BlowfishEncrypter::encrypt_block(uint32_t &left, uint32_t &right)
 {
