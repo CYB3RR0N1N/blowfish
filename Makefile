@@ -1,20 +1,19 @@
-DIR = build
+BUILD_DIR = build
+
+ARGS = -g --std=c++17
 
 .PHONY: all clean dir
 
 all: dir main
 
-main.o: main.cpp
-	g++ -c main.cpp -o $(DIR)/main.o -g --std=c++17
+%.o : source/%.cpp;
+	g++ -c $^ -o $(BUILD_DIR)/$@ $(ARGS)
 
-blowfish.o: blowfish.cpp
-	g++ -c blowfish.cpp -o $(DIR)/blowfish.o -g --std=c++17
-
-main: main.o blowfish.o
-	g++ -o $(DIR)/main -g $(DIR)/main.o $(DIR)/blowfish.o --std=c++17
+main: blowfish.o simple_parser.o main.o
+	g++ -o $(BUILD_DIR)/main $(BUILD_DIR)/main.o $(BUILD_DIR)/blowfish.o $(BUILD_DIR)/simple_parser.o $(ARGS)
 
 clean:
-	rm -rf ./$(DIR)/*
+	rm -rf ./$(BUILD_DIR)/*
 
 dir:
-	mkdir -p $(DIR)
+	mkdir -p $(BUILD_DIR)

@@ -9,7 +9,11 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/main",
+<<<<<<< HEAD
             "args": ["-d","files/crypted_test.dat"],
+=======
+            "args": ["-d","-f","files/test.dat"],
+>>>>>>> fileenc
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
